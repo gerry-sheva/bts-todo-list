@@ -80,3 +80,21 @@ func (h *ChecklistHandler) GetAllChecklist(w http.ResponseWriter, r *http.Reques
 		apierror.GlobalErrorHandler.ServerErrorResponse(w, r, err)
 	}
 }
+
+func (h *ChecklistHandler) GetChecklistDetails(w http.ResponseWriter, r *http.Request) {
+	var user_id pgtype.UUID
+	user_id.Scan(r.Context().Value("sub").(string))
+
+	var checklist_id pgtype.UUID
+	checklist_id.Scan(r.PathValue("checklist_id"))
+
+	checklist, err := getChecklistDetails(r.Context(), h.dbpool, user_id, checklist_id)
+	if err != nil {
+		apierror.GlobalErrorHandler.ServerErrorResponse(w, r, err)
+	}
+
+	err = util.WriteJSON(w, http.StatusOK, util.Envelope{"checklist": checklist}, nil)
+	if err != nil {
+		apierror.GlobalErrorHandler.ServerErrorResponse(w, r, err)
+	}
+}

@@ -43,3 +43,16 @@ func getAllChecklist(ctx context.Context, dbpool *pgxpool.Pool, user_id pgtype.U
 
 	return checklists, nil
 }
+
+func getChecklistDetails(ctx context.Context, dbpool *pgxpool.Pool, user_id pgtype.UUID, checklist_id pgtype.UUID) (repository.GetChecklistDetailsRow, error) {
+	p := repository.GetChecklistDetailsParams{
+		UserID:      user_id,
+		ChecklistID: checklist_id,
+	}
+	checklist, err := repository.New(dbpool).GetChecklistDetails(ctx, p)
+	if err != nil {
+		return repository.GetChecklistDetailsRow{}, err
+	}
+
+	return checklist, nil
+}
