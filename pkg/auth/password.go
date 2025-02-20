@@ -33,6 +33,7 @@ var defaultParams = &Params{
 	keyLength:   32,
 }
 
+// Hashes password using Argon2
 func hashPassword(password string) (encodedHash string, err error) {
 	salt, err := generateSalt()
 	if err != nil {

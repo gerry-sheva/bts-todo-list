@@ -11,6 +11,8 @@ import (
 
 var secretKey = []byte("secretkey")
 
+// Creates JWT using user's email
+// JWT is valid for a week
 func createJWT(email string) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": email,
@@ -27,6 +29,8 @@ func createJWT(email string) (string, error) {
 	return jwt, nil
 }
 
+// Verifies the validity of JWT
+// It checks whether the JWT is correct, not yet expired, and issued by this app
 func VerifyJWT(authHeader string) (jwt.MapClaims, error) {
 	// Validate header format: "Bearer <token>"
 	splitToken := strings.Split(authHeader, "Bearer ")
