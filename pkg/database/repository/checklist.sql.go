@@ -78,8 +78,13 @@ func (q *Queries) GetChecklist(ctx context.Context, userID pgtype.UUID) ([]Check
 }
 
 const getChecklistDetails = `-- name: GetChecklistDetails :one
-select checklist_id, user_id, title, created_at, updated_at, deleted_at from checklist
-where checklist_id = $1 and user_id = $2 and deleted_at is null
+select
+    c.title,
+    ci.item,
+    ci.checked_at
+from checklist c
+join checklist_items ci on c.checklist_id = ci.checklist_id
+where c.checklist_id = $1 and c.user_id = $2 and c.deleted_at is null
 `
 
 type GetChecklistDetailsParams struct {
@@ -87,16 +92,15 @@ type GetChecklistDetailsParams struct {
 	UserID      pgtype.UUID
 }
 
-func (q *Queries) GetChecklistDetails(ctx context.Context, arg GetChecklistDetailsParams) (Checklist, error) {
+type GetChecklistDetailsRow struct {
+	Title     string
+	Item      string
+	CheckedAt pgtype.Timestamptz
+}
+
+func (q *Queries) GetChecklistDetails(ctx context.Context, arg GetChecklistDetailsParams) (GetChecklistDetailsRow, error) {
 	row := q.db.QueryRow(ctx, getChecklistDetails, arg.ChecklistID, arg.UserID)
-	var i Checklist
-	err := row.Scan(
-		&i.ChecklistID,
-		&i.UserID,
-		&i.Title,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-	)
+	var i GetChecklistDetailsRow
+	err := row.Scan(&i.Title, &i.Item, &i.CheckedAt)
 	return i, err
 }
