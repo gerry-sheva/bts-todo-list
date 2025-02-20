@@ -8,6 +8,25 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Checklist struct {
+	ChecklistID pgtype.UUID
+	UserID      pgtype.UUID
+	Title       string
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+	DeletedAt   pgtype.Timestamptz
+}
+
+type ChecklistItem struct {
+	ChecklistItemID pgtype.UUID
+	ChecklistID     pgtype.UUID
+	Item            string
+	CheckedAt       pgtype.Timestamptz
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	DeletedAt       pgtype.Timestamptz
+}
+
 type User struct {
 	UserID    pgtype.UUID
 	Username  string

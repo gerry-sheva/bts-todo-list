@@ -1,8 +1,8 @@
 -- name: NewUser :one
 insert into users (username, password)
 values ($1, $2)
-returning username;
+returning user_id;
 
 -- name: GetUser :one
-SELECT username, password FROM users
+SELECT user_id, password FROM users
 WHERE username = $1;

@@ -11,11 +11,11 @@ import (
 
 var secretKey = []byte("secretkey")
 
-// Creates JWT using user's email
+// Creates JWT using user's uuid
 // JWT is valid for a week
-func createJWT(email string) (string, error) {
+func createJWT(uuid string) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": email,
+		"sub": uuid,
 		"iss": "bts",
 		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(),
 		"iat": time.Now().Unix(),

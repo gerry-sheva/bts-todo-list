@@ -30,7 +30,7 @@ func register(ctx context.Context, dbpool *pgxpool.Pool, i *AuthInput) (string, 
 		return "", err
 	}
 
-	jwt, err := createJWT(user)
+	jwt, err := createJWT(user.String())
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +53,7 @@ func login(ctx context.Context, dbpool *pgxpool.Pool, i *AuthInput) (string, err
 		return "", ErrInvalidCredentials
 	}
 
-	jwt, err := createJWT(user.Username)
+	jwt, err := createJWT(user.UserID.String())
 	if err != nil {
 		return "", ErrJWTGenerationError
 	}

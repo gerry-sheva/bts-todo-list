@@ -7,29 +7,31 @@ package repository
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getUser = `-- name: GetUser :one
-SELECT username, password FROM users
+SELECT user_id, password FROM users
 WHERE username = $1
 `
 
 type GetUserRow struct {
-	Username string
+	UserID   pgtype.UUID
 	Password string
 }
 
 func (q *Queries) GetUser(ctx context.Context, username string) (GetUserRow, error) {
 	row := q.db.QueryRow(ctx, getUser, username)
 	var i GetUserRow
-	err := row.Scan(&i.Username, &i.Password)
+	err := row.Scan(&i.UserID, &i.Password)
 	return i, err
 }
 
 const newUser = `-- name: NewUser :one
 insert into users (username, password)
 values ($1, $2)
-returning username
+returning user_id
 `
 
 type NewUserParams struct {
@@ -37,9 +39,9 @@ type NewUserParams struct {
 	Password string
 }
 
-func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) (string, error) {
+func (q *Queries) NewUser(ctx context.Context, arg NewUserParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, newUser, arg.Username, arg.Password)
-	var username string
-	err := row.Scan(&username)
-	return username, err
+	var user_id pgtype.UUID
+	err := row.Scan(&user_id)
+	return user_id, err
 }

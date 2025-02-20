@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gerry-sheva/bts-todo-list/pkg/auth"
+	"github.com/gerry-sheva/bts-todo-list/pkg/checklist"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -36,11 +37,14 @@ func StartServer(logger *slog.Logger, dbpool *pgxpool.Pool) {
 	}
 
 	AuthHandler := auth.New(app.logger, app.dbpool)
+	ChecklistHandler := checklist.New(app.logger, app.dbpool)
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /register", AuthHandler.RegisterUser)
 	mux.HandleFunc("POST /login", AuthHandler.LoginUser)
+	mux.Handle("POST /checklist", Auth(http.HandlerFunc(ChecklistHandler.CreateChecklist)))
+	mux.Handle("DELETE /checklist/{checklist_id}", Auth(http.HandlerFunc(ChecklistHandler.DeleteChecklist)))
 
 	muxWithMiddleware := LogRequests(logger)(mux)
 
