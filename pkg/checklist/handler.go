@@ -65,3 +65,18 @@ func (h *ChecklistHandler) DeleteChecklist(w http.ResponseWriter, r *http.Reques
 		apierror.GlobalErrorHandler.ServerErrorResponse(w, r, err)
 	}
 }
+
+func (h *ChecklistHandler) GetAllChecklist(w http.ResponseWriter, r *http.Request) {
+	var user_id pgtype.UUID
+	user_id.Scan(r.Context().Value("sub").(string))
+
+	checklists, err := getAllChecklist(r.Context(), h.dbpool, user_id)
+	if err != nil {
+		apierror.GlobalErrorHandler.NotFoundResponse(w, r)
+	}
+
+	err = util.WriteJSON(w, http.StatusOK, util.Envelope{"checklists": checklists}, nil)
+	if err != nil {
+		apierror.GlobalErrorHandler.ServerErrorResponse(w, r, err)
+	}
+}

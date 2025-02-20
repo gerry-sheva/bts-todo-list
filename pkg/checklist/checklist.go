@@ -34,3 +34,12 @@ func deleteChecklist(ctx context.Context, dbpool *pgxpool.Pool, user_id pgtype.U
 
 	return nil
 }
+
+func getAllChecklist(ctx context.Context, dbpool *pgxpool.Pool, user_id pgtype.UUID) ([]repository.Checklist, error) {
+	checklists, err := repository.New(dbpool).GetChecklist(ctx, user_id)
+	if err != nil {
+		return nil, err
+	}
+
+	return checklists, nil
+}
