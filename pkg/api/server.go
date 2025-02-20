@@ -45,6 +45,7 @@ func StartServer(logger *slog.Logger, dbpool *pgxpool.Pool) {
 	mux.HandleFunc("POST /login", AuthHandler.LoginUser)
 	mux.Handle("POST /checklist", Auth(http.HandlerFunc(ChecklistHandler.CreateChecklist)))
 	mux.Handle("DELETE /checklist/{checklist_id}", Auth(http.HandlerFunc(ChecklistHandler.DeleteChecklist)))
+	mux.Handle("GET /checklist", Auth(http.HandlerFunc(ChecklistHandler.GetAllChecklist)))
 
 	muxWithMiddleware := LogRequests(logger)(mux)
 
